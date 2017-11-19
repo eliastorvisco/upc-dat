@@ -35,7 +35,7 @@ void deleteMessages (list<string> ids) {
 list<Message> messagesByTo(string toId) {
 	
 	DBConnection dbc(db_dir);
-	dbc.select("messages", "to", toId); //Generates temp table with every message with to = toId
+	dbc.select("messages", "to", toId); 
 
 	list<Message> messages;
 
@@ -47,7 +47,7 @@ list<Message> messagesByTo(string toId) {
 		message.to = dbc.get("to");
 		message.subject = dbc.get("subject");
 		message.content = dbc.get("content");
-		message.time = stol(dbc.get("time")); //Get it as long
+		message.time = stol(dbc.get("time")); 
 
 		messages.push_back(message);
 	}
@@ -56,8 +56,6 @@ list<Message> messagesByTo(string toId) {
 }
 
 Maybe<Message> messageById(string id) {
-
-	//TODO: Hacer la comprobacion de que el mensaje pertenece a quien lo pide
 
 	DBConnection dbc(db_dir);
 	dbc.select("messages", "id", id);
@@ -69,7 +67,7 @@ Maybe<Message> messageById(string id) {
 		message.to = dbc.get("to");
 		message.subject = dbc.get("subject");
 		message.content = dbc.get("content");
-		message.time = stol(dbc.get("time")); //Get it as long
+		message.time = stol(dbc.get("time")); 
 
 		return Just(message);
 	}
@@ -103,33 +101,27 @@ bool send(string _from, string _to, string _subject, string _content) {
 		
 }
 
-/***************************************************************
- * 
- * Funcions Auxiliars
- * 
- */
+Maybe<string> userByName(string _name) {
 
- Maybe<string> userByName(string _name) {
+	DBConnection dbc(db_dir);
+	dbc.select("users", "name", _name);
 
-	 DBConnection dbc(db_dir);
-	 dbc.select("users", "name", _name);
+	if (dbc.next()) 
+		return Just(dbc.get("id"));
+	
+	return Nothing<string>();
+}
 
-	 if (dbc.next()) 
-		 return Just(dbc.get("id"));
-	 
-	 return Nothing<string>();
- }
+Maybe<string> userNameById(string _id) {
 
- Maybe<string> userNameById(string _id) {
+	DBConnection dbc(db_dir);
+	dbc.select("users", "id", _id);
 
-	 DBConnection dbc(db_dir);
-	 dbc.select("users", "id", _id);
-
-	 if (dbc.next()) 
-		 return Just(dbc.get("name"));
-	 
-	 return Nothing<string>();
- }
+	if (dbc.next()) 
+		return Just(dbc.get("name"));
+	
+	return Nothing<string>();
+}
  
 
  string getSequence() {
@@ -140,7 +132,6 @@ bool send(string _from, string _to, string _subject, string _content) {
 
 	string messageId = dbc.get("value");
 	messageId = to_string(stoi(messageId) + 1);
-	//DBConnecton dbc(db_dir);
 	dbc.update("msg-seq", "value", messageId);
 
 	return messageId;

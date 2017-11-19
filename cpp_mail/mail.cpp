@@ -46,7 +46,6 @@ Response getMessage(string mid, const Request &req);
 Response logout(const Request &req);
 Maybe<string> getCookieUserId(const Request &req);
 
-Response error_page(const string& msg);
 Response errorResponse(const Status & status, const string& msg);
 
 
@@ -59,10 +58,10 @@ Response mailApp(Request request) {
 
 		if (pathInfo == LOGIN_URL || pathInfo == "/") {
 			
-			if (request.method() == "GET") 	//When first-time-access, or logout
+			if (request.method() == "GET") 	
 				return getLogin(request); 
 
-			if (request.method() == "POST")	//When trying to login
+			if (request.method() == "POST")	
 				return postLogin(request); 
 			
 			errorResponse(methodNotAllowed405, "Invalid request method");
@@ -73,27 +72,27 @@ Response mailApp(Request request) {
 
 		} else if (pathInfo == INBOX_URL) {
 			
-			if (request.method() == "GET") 	//When successfully logged in
+			if (request.method() == "GET") 	
 				return getInbox(request); 
 
-			if (request.method() == "POST")	//When Deleting a Message
+			if (request.method() == "POST")	
 				return postInbox(request); 
 				
 			errorResponse(methodNotAllowed405, "Invalid request method");
 
 		} else if (pathInfo == SEND_URL) {
 			
-			if (request.method() == "GET") 	//When click New Message from /inbox
+			if (request.method() == "GET") 	
 				return getSend(request); 
 
-			if (request.method() == "POST")	//When click Send Message from /send
+			if (request.method() == "POST")	
 				return postSend(request); 
 			
 		errorResponse(methodNotAllowed405, "Invalid request method");
 
 		} else if (pathInfo.compare(0,7,"/inbox/") == 0) {
             string mid = pathInfo.substr(7);
-			if (request.method() == "GET")			//When click on a message from /inbox
+			if (request.method() == "GET")			
 				return getMessage(mid, request);	
 				
 		} else 
@@ -131,7 +130,7 @@ Response getLogin(const Request &req) {
 
 	return Response(ok200, hs, html);
 
-} // Works Fine!
+} 
 
 Response postLogin(const Request &req) {
 
@@ -162,7 +161,7 @@ Response postLogin(const Request &req) {
 
 	return Response(seeOther303, hs, "");
 
-} // Works Fine!
+} 
 
 Response logout(const Request& req) {
 
@@ -174,7 +173,7 @@ Response logout(const Request& req) {
 	hs.push_front(Header("Location", APPROOT + LOGIN_URL));
 	return Response(seeOther303, hs, "");
 
-} // Works Fine!
+} 
 
 Response getInbox(const Request &req) {
 
@@ -189,7 +188,8 @@ Response getInbox(const Request &req) {
 	ByteString html = layout(mbUserId, "Inbox", inboxPage(fromJust(mbUserId)));
 
 	return Response(ok200, hs, html);
-} // Works Fine!
+
+} 
 
 Response postInbox(const Request &req) {
 
@@ -211,7 +211,6 @@ Response postInbox(const Request &req) {
 									 "You are trying to delete a message that does not belong to you");
 		}
 	
-
 		deleteMessages(ids);
 
 	} 
@@ -236,6 +235,7 @@ Response getSend(const Request &req) {
 	ByteString html = layout(mbUserId, "Send", sendPage(fromJust(mbUserId)));
 
 	return Response(temporaryRedirect307, hs, html);
+
 }
 
 Response postSend(const Request &req) {
@@ -279,6 +279,7 @@ Response postSend(const Request &req) {
 
 		}
 	}
+
 	return errorResponse(badRequest400, "Unexpected Action.");
 }
 
@@ -301,6 +302,7 @@ Response getMessage(string mid, const Request &req){
 	hs.push_back(Header("Content-Type", MIME_HTML));
 	ByteString html = layout(mbUserId, "Message", messagePage(mid, fromJust(mbUserId)));
 	return Response(ok200, hs, html);
+
 }
 
 
@@ -317,22 +319,6 @@ Maybe<string> getCookieUserId(const Request &req) {
 /****************************************************************
  * Handlers d'errors
  */
-
-Response error_page(const string& msg)
-{
-	ByteString html;
-	html.append("<html><head><meta charset=\"UTF-8\">\n").
-		append("<title>Pràctica 2: Mail</title>\n").
-		append("</head><body>\n").
-		append("<h2>ERROR</h2>").
-		append("<h3><font color=\"red\">").append(msg).append("</font></h3>\n").
-		append("<p><a href=\"/~ldatusr12/practica2/mail.cgi/login\">Pàgina de sessió</a></p>\n").
-		append("</body></html>\n");
-
-	ResponseHeaders hs;
-	hs.push_back(Header("Content-Type", MIME_HTML));
-	return Response(internalServerError500, hs, html);
-}
 
 Response errorResponse(const Status & status, const string& msg)
 {

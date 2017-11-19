@@ -5,9 +5,8 @@ using namespace std;
 using namespace dat_base;
 using namespace dat_http;
 
-
-
 string escapeHtml(const string& text) {
+        
         string result;
         for (unsigned i = 0; i < text.size(); i++) {
                 char c = text[i];
@@ -22,6 +21,7 @@ string escapeHtml(const string& text) {
         }
         return result;
 }
+
 ByteString layout(Maybe<string> mbUserId, string title, ByteString body) {
 
 	ByteString html;

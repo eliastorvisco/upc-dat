@@ -8,7 +8,7 @@
 #include <dat_base/except.hpp>
 #include <dat_base/maybe.hpp>
 
-#include <iostream>     // cout
+#include <iostream>     
 
 using namespace std;
 using namespace dat_base;
